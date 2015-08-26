@@ -1,0 +1,14 @@
+<div id="teams-search-bar" class="search-bar teams-search-bar" role="search" aria-label="Team">
+    <form class="teams-search-form">
+        <label for="teams-search-input" class="sr"><%- gettext('Team Search') %></label>
+        <div class="search-field-wrapper">
+            <button type="submit" class="search-button">
+                <i class="icon fa fa-search" aria-hidden="true"></i>
+            </button>
+            <input id="teams-search-input" type="text" class="search-field" value="<%- searchString %>"/>
+            <button type="button" class="cancel-button" aria-label="<%- gettext('Clear search') %>">
+                <i class="icon fa fa-remove" aria-hidden="true"></i>
+            </button>
+        </div>
+    </form>
+</div>

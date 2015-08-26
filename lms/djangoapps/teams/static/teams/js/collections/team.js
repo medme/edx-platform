@@ -9,12 +9,15 @@
                     var self = this;
                     BaseCollection.prototype.initialize.call(this, options);
 
+                    this.searchString = null;
+
                     this.server_api = _.extend(
                         {
                             topic_id: this.topic_id = options.topic_id,
                             expand: 'user',
+                            text_search: function () { return self.searchString ? self.searchString : ''; },
                             course_id: function () { return encodeURIComponent(self.course_id); },
-                            order_by: function () { return this.sortField; }
+                            order_by: function () { return self.searchString ? '' : this.sortField; }
                         },
                         BaseCollection.prototype.server_api
                     );
@@ -24,7 +27,12 @@
                     this.registerSortableField('open_slots', gettext('open slots'));
                 },
 
-                model: TeamModel
+                model: TeamModel,
+
+                setSearchString: function(searchString) {
+                    this.searchString = searchString;
+                    this.isStale = true;
+                }
             });
             return TeamCollection;
         });

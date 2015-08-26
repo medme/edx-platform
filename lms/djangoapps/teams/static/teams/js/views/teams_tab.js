@@ -18,11 +18,12 @@
             'teams/js/views/topic_teams',
             'teams/js/views/edit_team',
             'teams/js/views/team_profile_header_actions',
+            'teams/js/views/search_field',
             'text!teams/templates/teams_tab.underscore'],
         function (Backbone, _, gettext, HeaderView, HeaderModel, TabbedView,
                   TopicModel, TopicCollection, TeamModel, TeamCollection, TeamMembershipCollection,
                   TopicsView, TeamProfileView, MyTeamsView, TopicTeamsView, TeamEditView,
-                  TeamProfileHeaderActionsView, teamsTemplate) {
+                  TeamProfileHeaderActionsView, SearchFieldView, teamsTemplate) {
             var TeamsHeaderModel = HeaderModel.extend({
                 initialize: function (attributes) {
                     _.extend(this.defaults, {nav_aria_label: gettext('teams')});
@@ -268,9 +269,9 @@
                     // Lazily load the teams-for-topic view in
                     // order to avoid making an extra AJAX call.
                     var self = this,
-                        router = this.router,
                         deferred = $.Deferred();
-                    if (this.teamsCollection && this.teamsCollection.topic_id === topicID && this.teamsView) {
+                    if (this.teamsView && this.teamsCollection && this.teamsCollection.topic_id === topicID) {
+                        this.teamsCollection.setSearchString('');
                         deferred.resolve(this.teamsView);
                     } else {
                         this.getTopic(topicID)
@@ -302,10 +303,11 @@
                                             }
                                         });
                                         deferred.resolve(
-                                            self.createViewWithHeader(
+                                            self.createSearchableListView(
                                                 {
                                                     mainView: teamsView,
-                                                    subject: topic
+                                                    subject: topic,
+                                                    collection: collection
                                                 }
                                             )
                                         );
@@ -417,6 +419,7 @@
                             title: viewTitle,
                             breadcrumbs: breadcrumbs
                         }),
+                        headerType: options.headerType,
                         headerActionsView: options.headerActionsView,
                         events: {
                             'click nav.breadcrumbs a.nav-item': function (event) {
@@ -430,6 +433,50 @@
                         header: headerView,
                         main: options.mainView
                     });
+                },
+
+                /**
+                 * Creates a searchable view with a header that understands
+                 * how to handle searches.
+                 */
+                createSearchableListView: function (options) {
+                    var subject = options.subject,
+                        collection = options.collection,
+                        searchFieldView = new SearchFieldView({
+                            collection: collection
+                        }),
+                        view = this.createViewWithHeader({
+                            mainView: options.mainView,
+                            subject: options.subject,
+                            headerType: 'search',
+                            headerActionsView: searchFieldView
+                        }),
+                        headerModel;
+                    headerModel = view.header.model;
+                    this.listenTo(collection, 'sync', function() {
+                        if (collection.searchString) {
+                            headerModel.set(
+                                'title',
+                                interpolate(
+                                    gettext('Search Topic: %(topic)s'),
+                                    { topic: subject.get('name') },
+                                    true
+                                )
+                            );
+                            headerModel.set(
+                                'description',
+                                interpolate(
+                                    gettext('Matching "%(searchString)s"'),
+                                    { searchString: collection.searchString },
+                                    true
+                                )
+                            );
+                        } else {
+                            headerModel.set('title', subject.get('name'));
+                            headerModel.set('description', subject.get('description'));
+                        }
+                    });
+                    return view;
                 },
 
                 /**

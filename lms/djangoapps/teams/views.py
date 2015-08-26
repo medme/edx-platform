@@ -320,7 +320,7 @@ class TeamsListView(ExpandableFieldViewMixin, GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if 'text_search' in request.QUERY_PARAMS and 'order_by' in request.QUERY_PARAMS:
+        if request.QUERY_PARAMS.get('text_search', None) and request.QUERY_PARAMS.get('order_by', None):
             return Response(
                 build_api_error(ugettext_noop("text_search and order_by cannot be provided together")),
                 status=status.HTTP_400_BAD_REQUEST

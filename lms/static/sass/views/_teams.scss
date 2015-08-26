@@ -91,15 +91,28 @@
         transition: all $tmg-f2 ease-in-out;
         border: 0;
         border-bottom: 2px solid transparent;
-        padding: ($baseline/4) ($baseline/2);
+        padding: ($baseline/4) (16 + $baseline/2);
         font-family: inherit;
         color: $gray;
-        @include text-align(right);
 
         &:focus {
           border-bottom: 2px solid $black;
           color: $black;
         }
+    }
+
+    // The team page's search button is shown to the left to leave
+    // room for the cancel button.
+    .search-button {
+      @include left(12px);
+      @include right(0px);
+    }
+
+    // Only show the cancel button when the form is considered active
+    &.is-active {
+      .cancel-button {
+        display: block;
+      }
     }
 
     .action-search {
