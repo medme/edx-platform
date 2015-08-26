@@ -62,7 +62,7 @@ define([
             expect(myTeamsView.$el.text().trim()).toBe('You are not currently a member of any team.');
             teamMemberships.teamEvents.trigger('teams:update', { action: 'create' });
             myTeamsView.render();
-            AjaxHelpers.expectJsonRequestURL(
+            AjaxHelpers.expectRequestURL(
                 requests,
                 'api/teams/team_memberships',
                 {
@@ -70,7 +70,8 @@ define([
                     username : 'testUser',
                     course_id : 'my/course/id',
                     page : '1',
-                    page_size : '10'
+                    page_size : '10',
+                    text_search: ''
                 }
             );
             AjaxHelpers.respondWithJson(requests, {});

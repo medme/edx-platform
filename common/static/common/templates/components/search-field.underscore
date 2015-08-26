@@ -1,0 +1,7 @@
+<div class="page-header-search wrapper-search-<%= type %>">
+    <form class="search-form">
+        <label for="search-<%= type %>" class="search-label">><%- searchLabel %></label>
+        <input id="search-<%= type %>" class="search-field" value="<%- searchString %>" placeholder="<%- searchLabel %>" />
+        <button type="submit" class="action action-search"><span class="icon fa-search" aria-hidden="true"></span><span class="sr"><%- gettext('Search') %></span></button>
+    </form>
+</div>

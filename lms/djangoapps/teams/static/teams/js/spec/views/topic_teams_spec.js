@@ -118,7 +118,7 @@ define([
             verifyActions(teamsView, {showActions: true});
             teamMemberships.teamEvents.trigger('teams:update', { action: 'create' });
             teamsView.render();
-            AjaxHelpers.expectJsonRequestURL(
+            AjaxHelpers.expectRequestURL(
                 requests,
                 'foo',
                 {

@@ -137,5 +137,92 @@ define([
                 })).toBe(true);
             });
         });
+
+        describe('Search', function () {
+            var verifyTeamsRequest = function(requests, options) {
+                AjaxHelpers.expectRequestURL(requests, 'api/teams/',
+                    _.extend(
+                        {
+                            topic_id: 'test_topic',
+                            expand: 'user',
+                            course_id: 'test/course/id',
+                            order_by: '',
+                            page: '1',
+                            page_size: '10',
+                            text_search: ''
+                        },
+                        options
+                    ));
+            };
+
+            it('can search teams', function () {
+                var requests = AjaxHelpers.requests(this),
+                    teamsTabView = createTeamsTabView();
+                teamsTabView.browseTopic('test_topic');
+                verifyTeamsRequest(requests, {
+                    order_by: 'name',
+                    text_search: ''
+                });
+                AjaxHelpers.respondWithJson(requests, {});
+                teamsTabView.$('.search-field').val('foo');
+                teamsTabView.$('.action-search').click();
+                verifyTeamsRequest(requests, {
+                    order_by: '',
+                    text_search: 'foo'
+                });
+                AjaxHelpers.respondWithJson(requests, {});
+                expect(teamsTabView.$('.page-title').text()).toBe('Search Topic: test topic');
+                expect(teamsTabView.$('.page-description').text()).toBe('Showing results for "foo"');
+            });
+
+            it('can clear a search', function () {
+                var requests = AjaxHelpers.requests(this),
+                    teamsTabView = createTeamsTabView();
+                teamsTabView.browseTopic('test_topic');
+                AjaxHelpers.respondWithJson(requests, {});
+
+                // Perform a search
+                teamsTabView.$('.search-field').val('foo');
+                teamsTabView.$('.action-search').click();
+                AjaxHelpers.respondWithJson(requests, {});
+
+                // Clear the search and submit it again
+                teamsTabView.$('.search-field').val('');
+                teamsTabView.$('.action-search').click();
+                verifyTeamsRequest(requests, {
+                    order_by: 'name',
+                    text_search: ''
+                });
+                AjaxHelpers.respondWithJson(requests, {});
+                expect(teamsTabView.$('.page-title').text()).toBe('test topic');
+                expect(teamsTabView.$('.page-description').text()).toBe('test description');
+            });
+
+            it('clears the search when navigating away and then back', function () {
+                var requests = AjaxHelpers.requests(this),
+                    teamsTabView = createTeamsTabView();
+                teamsTabView.browseTopic('test_topic');
+                AjaxHelpers.respondWithJson(requests, {});
+
+                // Perform a search
+                teamsTabView.$('.search-field').val('foo');
+                teamsTabView.$('.action-search').click();
+                AjaxHelpers.respondWithJson(requests, {});
+
+                // Navigate to the "My Teams" tab
+                teamsTabView.goToTab('my-teams');
+                AjaxHelpers.respondWithJson(requests, {});
+
+                // Navigate back to the teams list
+                teamsTabView.browseTopic('test_topic');
+                verifyTeamsRequest(requests, {
+                    order_by: 'name',
+                    text_search: ''
+                });
+                AjaxHelpers.respondWithJson(requests, {});
+                expect(teamsTabView.$('.page-title').text()).toBe('test topic');
+                expect(teamsTabView.$('.page-description').text()).toBe('test description');
+            });
+        });
     });
 });

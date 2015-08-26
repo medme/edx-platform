@@ -15,7 +15,6 @@
                         {
                             topic_id: this.topic_id = options.topic_id,
                             expand: 'user',
-                            text_search: function () { return self.searchString ? self.searchString : ''; },
                             course_id: function () { return encodeURIComponent(self.course_id); },
                             order_by: function () { return self.searchString ? '' : this.sortField; }
                         },

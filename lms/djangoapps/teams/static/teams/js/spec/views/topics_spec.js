@@ -48,14 +48,15 @@ define([
                 topicsView = createTopicsView();
 
             triggerUpdateEvent(topicsView);
-            AjaxHelpers.expectJsonRequestURL(
+            AjaxHelpers.expectRequestURL(
                 requests,
                 'api/teams/topics',
                 {
-                    course_id : 'my/course/id',
-                    page : '1',
-                    page_size : '5',  // currently the page size is determined by the size of the collection
-                    order_by : 'name'
+                    course_id: 'my/course/id',
+                    page: '1',
+                    page_size: '5',  // currently the page size is determined by the size of the collection
+                    order_by: 'name',
+                    text_search: ''
                 }
             );
         });
@@ -66,14 +67,15 @@ define([
 
             // Staff are not immediately added to the team, but may choose to join after the create event.
             triggerUpdateEvent(topicsView, true);
-            AjaxHelpers.expectJsonRequestURL(
+            AjaxHelpers.expectRequestURL(
                 requests,
                 'api/teams/topics',
                 {
-                    course_id : 'my/course/id',
-                    page : '1',
-                    page_size : '5',  // currently the page size is determined by the size of the collection
-                    order_by : 'name'
+                    course_id: 'my/course/id',
+                    page: '1',
+                    page_size: '5',  // currently the page size is determined by the size of the collection
+                    order_by: 'name',
+                    text_search: ''
                 }
             );
         });

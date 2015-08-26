@@ -4,6 +4,7 @@
     define(['backbone',
             'underscore',
             'gettext',
+            'common/js/components/views/search_field',
             'js/components/header/views/header',
             'js/components/header/models/header',
             'js/components/tabbed/views/tabbed_view',
@@ -18,12 +19,11 @@
             'teams/js/views/topic_teams',
             'teams/js/views/edit_team',
             'teams/js/views/team_profile_header_actions',
-            'teams/js/views/search_field',
             'text!teams/templates/teams_tab.underscore'],
-        function (Backbone, _, gettext, HeaderView, HeaderModel, TabbedView,
+        function (Backbone, _, gettext, SearchFieldView, HeaderView, HeaderModel, TabbedView,
                   TopicModel, TopicCollection, TeamModel, TeamCollection, TeamMembershipCollection,
                   TopicsView, TeamProfileView, MyTeamsView, TopicTeamsView, TeamEditView,
-                  TeamProfileHeaderActionsView, SearchFieldView, teamsTemplate) {
+                  TeamProfileHeaderActionsView, teamsTemplate) {
             var TeamsHeaderModel = HeaderModel.extend({
                 initialize: function (attributes) {
                     _.extend(this.defaults, {nav_aria_label: gettext('teams')});
@@ -444,6 +444,7 @@
                         collection = options.collection,
                         searchFieldView, view, headerModel;
                     searchFieldView = new SearchFieldView({
+                        type: 'teams',
                         collection: collection
                     });
                     view = this.createViewWithHeader({
