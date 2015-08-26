@@ -442,16 +442,15 @@
                 createSearchableListView: function (options) {
                     var subject = options.subject,
                         collection = options.collection,
-                        searchFieldView = new SearchFieldView({
-                            collection: collection
-                        }),
-                        view = this.createViewWithHeader({
-                            mainView: options.mainView,
-                            subject: options.subject,
-                            headerType: 'search',
-                            headerActionsView: searchFieldView
-                        }),
-                        headerModel;
+                        searchFieldView, view, headerModel;
+                    searchFieldView = new SearchFieldView({
+                        collection: collection
+                    });
+                    view = this.createViewWithHeader({
+                        mainView: options.mainView,
+                        subject: subject,
+                        headerActionsView: searchFieldView
+                    });
                     headerModel = view.header.model;
                     this.listenTo(collection, 'sync', function() {
                         if (collection.searchString) {
@@ -466,7 +465,7 @@
                             headerModel.set(
                                 'description',
                                 interpolate(
-                                    gettext('Matching "%(searchString)s"'),
+                                    gettext('Showing results for "%(searchString)s"'),
                                     { searchString: collection.searchString },
                                     true
                                 )

@@ -8,22 +8,16 @@
                var HeaderView = Backbone.View.extend({
                    initialize: function (options) {
                        this.template = _.template(headerTemplate);
-                       this.headerType = options.headerType;
                        this.headerActionsView = options.headerActionsView;
                        this.listenTo(this.model, 'change', this.render);
                        this.render();
                    },
 
                    render: function () {
-                       var json = _.extend(
-                           {
-                               headerType: this.headerType
-                           },
-                           this.model.attributes
-                       );
+                       var json = this.model.attributes;
                        this.$el.html(this.template(json));
                        if (this.headerActionsView) {
-                           this.headerActionsView.setElement(this.$('.header-action-view')).render();
+                           this.headerActionsView.setElement(this.$('.page-header-secondary')).render();
                        }
                        return this;
                    }

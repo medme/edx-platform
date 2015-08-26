@@ -7,32 +7,19 @@
 
                 events: {
                     'submit .teams-search-form': 'performSearch',
-                    'keyup .search-field': 'refreshState',
                     'click .cancel-button': 'clearSearch'
                 },
 
                 initialize: function(options) {
-                    this.collection = options.collection;
+                    Backbone.View.prototype.initialize.call(this, options);
                     _.bindAll(this, 'performSearch', 'clearSearch');
-                },
-
-                refreshState: function() {
-                    var searchField = this.$('.search-field'),
-                        searchString = $.trim(searchField.val());
-                    if (searchString) {
-                        searchField.addClass('is-active');
-                        this.$('.cancel-button').show();
-                    } else {
-                        searchField.removeClass('is-active');
-                        this.$('.cancel-button').hide();
-                    }
                 },
 
                 render: function() {
                     this.$el.html(_.template(searchFieldTemplate, {
-                        searchString: this.collection.searchString
+                        searchString: this.collection.searchString,
+                        searchLabel: gettext('Search teams')
                     }));
-                    this.refreshState();
                     return this;
                 },
 
@@ -40,7 +27,6 @@
                     var searchField = this.$('.search-field'),
                         searchString = $.trim(searchField.val());
                     event.preventDefault();
-                    this.refreshState();
                     this.collection.setSearchString(searchString);
                     this.collection.setPage(1);
                 },
@@ -50,7 +36,6 @@
                     event.preventDefault();
                     searchField.val('');
                     this.collection.setSearchString('');
-                    this.refreshState();
                     this.collection.setPage(1);
                 }
             });
