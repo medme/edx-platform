@@ -1,61 +1,57 @@
-var edx = edx || {};
-
-(function($, Backbone) {
+;(function (define) {
     'use strict';
+    define(['jquery', 'backbone'], function($, Backbone) {
 
-    edx.student = edx.student || {};
-    edx.student.account = edx.student.account || {};
+        var RegisterModel = Backbone.Model.extend({
+            defaults: {
+                email: '',
+                name: '',
+                username: '',
+                password: '',
+                level_of_education: '',
+                gender: '',
+                year_of_birth: '',
+                mailing_address: '',
+                goals: ''
+            },
 
-    edx.student.account.RegisterModel = Backbone.Model.extend({
+            ajaxType: '',
+            urlRoot: '',
 
-        defaults: {
-            email: '',
-            name: '',
-            username: '',
-            password: '',
-            level_of_education: '',
-            gender: '',
-            year_of_birth: '',
-            mailing_address: '',
-            goals: '',
-        },
+            initialize: function( attributes, options ) {
+                this.ajaxType = options.method;
+                this.urlRoot = options.url;
+            },
 
-        ajaxType: '',
+            sync: function(method, model) {
+                var headers = { 'X-CSRFToken': $.cookie('csrftoken') },
+                    data = {},
+                    courseId = $.url( '?course_id' );
 
-        urlRoot: '',
-
-        initialize: function( attributes, options ) {
-            this.ajaxType = options.method;
-            this.urlRoot = options.url;
-        },
-
-        sync: function(method, model) {
-            var headers = { 'X-CSRFToken': $.cookie('csrftoken') },
-                data = {},
-                courseId = $.url( '?course_id' );
-
-            // If there is a course ID in the query string param,
-            // send that to the server as well so it can be included
-            // in analytics events.
-            if ( courseId ) {
-                data.course_id = decodeURIComponent(courseId);
-            }
-
-            // Include all form fields and analytics info in the data sent to the server
-            $.extend( data, model.attributes);
-
-            $.ajax({
-                url: model.urlRoot,
-                type: model.ajaxType,
-                data: data,
-                headers: headers,
-                success: function() {
-                    model.trigger('sync');
-                },
-                error: function( error ) {
-                    model.trigger('error', error);
+                // If there is a course ID in the query string param,
+                // send that to the server as well so it can be included
+                // in analytics events.
+                if ( courseId ) {
+                    data.course_id = decodeURIComponent(courseId);
                 }
-            });
-        }
+
+                // Include all form fields and analytics info in the data sent to the server
+                $.extend( data, model.attributes);
+
+                $.ajax({
+                    url: model.urlRoot,
+                    type: model.ajaxType,
+                    data: data,
+                    headers: headers,
+                    success: function() {
+                        model.trigger('sync');
+                    },
+                    error: function( error ) {
+                        model.trigger('error', error);
+                    }
+                });
+            }
+        });
+        return RegisterModel;
     });
-})(jQuery, Backbone);
+}).call(this, define || RequireJS.define);
