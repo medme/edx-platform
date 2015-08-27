@@ -45,7 +45,9 @@
          * Confirms with the user whether to run an operation or not, and then runs it if desired.
          */
         confirmThenRunOperation = function(title, message, actionLabel, operation, onCancelCallback) {
-            return new PromptView.Warning({
+            var warning;
+            var originalFocus = $(":focus");
+            warning = new PromptView.Warning({
                 title: title,
                 message: message,
                 actions: {
@@ -62,11 +64,35 @@
                             if (onCancelCallback) {
                                 onCancelCallback();
                             }
+                            // Set focus back to previous state
+                            originalFocus.focus();
                             return prompt.hide();
                         }
                     }
                 }
             }).show();
+
+            // Set focus to first tab focusable element in the prompt.
+            var tabbables = warning.$(":tabbable")
+            tabbables.first().focus()
+
+            /**
+             * Make tabs within the prompt loop rather than setting focus
+             * back to the main content of the page.
+             */
+            tabbables.on("keydown", function (event) {
+                // On tab backward from the first tabbable item in the prompt
+                if (event.which == 9 && event.shiftKey && event.target === tabbables.first()[0]) {
+                    event.preventDefault();
+                    tabbables.last().focus();
+                }
+                // On tab forward from the last tabbable item in the prompt
+                if (event.which == 9 && !event.shiftKey && event.target === tabbables.last()[0]) {
+                    event.preventDefault();
+                    tabbables.first().focus();
+                }
+            });
+            return warning
         };
 
         /**
@@ -82,6 +108,7 @@
                 title: gettext(message)
             });
             notificationView.show();
+            notificationView.focus();
             return operation().done(function() {
                 notificationView.hide();
             });
