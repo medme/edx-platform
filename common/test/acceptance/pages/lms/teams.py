@@ -3,6 +3,9 @@
 Teams pages.
 """
 
+from bok_choy.javascript import wait_for_js
+from bok_choy.promise import EmptyPromise
+
 from .course_page import CoursePage
 from .discussion import InlineDiscussionPage
 from ..common.paging import PaginatedUIMixin
@@ -228,6 +231,25 @@ class BrowseTeamsPage(CoursePage, PaginatedUIMixin, TeamCardsMixin):
             css='#paging-header-select option[value={sort_order}]'.format(sort_order=sort_order)
         ).click()
         self.wait_for_ajax()
+
+    def _showing_search_results(self):
+        """
+        Returns true if showing search results.
+        """
+        return self.header_topic_description.startswith(u"Showing results for")
+
+    def search(self, string):
+        """ Search for the specified string. """
+        self.q(css='.search-field').first.fill(string)
+        self.q(css='.action-search').first.click()
+        EmptyPromise(self._showing_search_results, u"Showing search results").fulfill()
+
+    @wait_for_js
+    def search_field_has_focus(self):
+        """
+        Returns true if the search field has focus.
+        """
+        return self.browser.execute_script("return $('{}').is(':focus')".format('.search-field'))
 
 
 class CreateOrEditTeamPage(CoursePage, FieldsMixin):

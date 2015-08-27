@@ -684,12 +684,14 @@ class BrowseTeamsWithinTopicTest(TeamsTabBase):
         When I visit the Teams page for that topic
         Then I should see the correct page header
         And I should see the link to "browse all team"
-        And I should navigate to that link
-        And I see the relevant page loaded
+        When I should navigate to that link
+        Then I should see the relevant page loaded
         And I should see the link to "search teams"
-        And I should navigate to that link
-        And I see the relevant page loaded
+        And the search field should not have focus
+        When I navigate to that link
+        Then the search field should have the focus
         """
+        teams = self.create_teams(self.topic, self.TEAMS_PAGE_SIZE + 10)
         self.browse_teams_page.visit()
         self.verify_page_header()
 
@@ -698,8 +700,27 @@ class BrowseTeamsWithinTopicTest(TeamsTabBase):
 
         self.browse_teams_page.visit()
         self.verify_page_header()
+        self.assertFalse(self.browse_teams_page.search_field_has_focus())
         self.browse_teams_page.click_search_team_link()
-        # TODO Add search page expectation once that implemented.
+        self.assertTrue(self.browse_teams_page.search_field_has_focus())
+
+    def test_search(self):
+        """
+        Scenario:
+        """
+        teams = self.create_teams(self.topic, 5)
+        self.browse_teams_page.visit()
+        self.browse_teams_page.search('4')
+        self.verify_on_page(1, teams, 'Showing 1-1 out of 1 total', True)
+
+    def test_empty_search(self):
+        """
+        Scenario:
+        """
+        teams = self.create_teams(self.topic, 5)
+        self.browse_teams_page.visit()
+        self.browse_teams_page.search('banana')
+        self.verify_on_page(1, teams, 'Showing 0 out of 0 total', True)
 
 
 @attr('shard_5')

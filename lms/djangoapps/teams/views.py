@@ -320,7 +320,8 @@ class TeamsListView(ExpandableFieldViewMixin, GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if request.QUERY_PARAMS.get('text_search', None) and request.QUERY_PARAMS.get('order_by', None):
+        text_search = request.QUERY_PARAMS.get('text_search', None)
+        if text_search and request.QUERY_PARAMS.get('order_by', None):
             return Response(
                 build_api_error(ugettext_noop("text_search and order_by cannot be provided together")),
                 status=status.HTTP_400_BAD_REQUEST
@@ -338,13 +339,12 @@ class TeamsListView(ExpandableFieldViewMixin, GenericAPIView):
         if 'include_inactive' in request.QUERY_PARAMS and request.QUERY_PARAMS['include_inactive'].lower() == 'true':
             del result_filter['is_active']
 
-        if 'text_search' in request.QUERY_PARAMS and CourseTeamIndexer.search_is_enabled():
+        if text_search and CourseTeamIndexer.search_is_enabled():
             search_engine = CourseTeamIndexer.engine()
-            text_search = request.QUERY_PARAMS['text_search'].encode('utf-8')
             result_filter.update({'course_id': course_id_string})
 
             search_results = search_engine.search(
-                query_string=text_search,
+                query_string=text_search.encode('utf-8'),
                 field_dictionary=result_filter,
                 size=MAXIMUM_SEARCH_SIZE,
             )

@@ -402,7 +402,7 @@ FEATURES = {
     'ENABLE_TEAMS': True,
 
     # Enable indexing teams for search
-    'ENABLE_TEAMS_SEARCH': False,
+    'ENABLE_TEAMS_SEARCH': True,
 
     # Show video bumper in LMS
     'ENABLE_VIDEO_BUMPER': False,

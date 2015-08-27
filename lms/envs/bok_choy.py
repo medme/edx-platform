@@ -122,6 +122,9 @@ FEATURES['ENABLE_EDXNOTES'] = True
 # Enable teams feature
 FEATURES['ENABLE_TEAMS'] = True
 
+# Enable teams search feature
+FEATURES['ENABLE_TEAMS_SEARCH'] = True
+
 # Enable custom content licensing
 FEATURES['LICENSING'] = True
 
