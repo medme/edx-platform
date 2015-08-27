@@ -175,7 +175,7 @@ class TeamsListView(ExpandableFieldViewMixin, GenericAPIView):
             * text_search: Searches for full word matches on the name, description,
               country, and language fields. NOTES: Search is on full names for countries
               and languages, not the ISO codes. Text_search cannot be requested along with
-              with order_by. Searching relies on the ENABLE_TEAMS_SEARCH flag being set to True.
+              with order_by.
 
             * order_by: Cannot be called along with with text_search. Must be one of the following:
 
