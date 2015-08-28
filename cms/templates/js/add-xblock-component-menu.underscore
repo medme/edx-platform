@@ -1,6 +1,12 @@
 <% if (type === 'advanced' || templates.length > 1) { %>
-    <div class="tab current" id="tab1">
-        <ul class="new-component-template" tabindex='-1'>
+    <div class="tab current" id="tab1" tabindex="-1" role="group" aria-label="<%-
+        interpolate(
+            gettext('%(type)s Component Template Menu'),
+                {type: type},
+                true
+        )
+    %>">
+        <ul class="new-component-template">
             <% for (var i = 0; i < templates.length; i++) { %>
                 <% if (!templates[i].boilerplate_name) { %>
                 <li class="editor-md empty">
@@ -18,6 +24,6 @@
                 <% } %>
             <% } %>
         </ul>
+        <button class="cancel-button" data-type="<%= type %>"><%= gettext("Cancel") %></button>
     </div>
-    <button class="cancel-button" data-type="<%= type %>"><%= gettext("Cancel") %></button>
 <% } %>
