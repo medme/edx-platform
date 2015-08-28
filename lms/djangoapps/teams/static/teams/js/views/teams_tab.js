@@ -1,4 +1,4 @@
-;(function (define, interpolate) {
+;(function (define) {
     'use strict';
 
     define(['backbone',
@@ -625,4 +625,4 @@
 
             return TeamTabView;
         });
-}).call(this, define || RequireJS.define, interpolate);
+}).call(this, define || RequireJS.define);

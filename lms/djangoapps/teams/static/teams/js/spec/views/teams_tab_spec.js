@@ -219,6 +219,19 @@ define([
                 expect(teamsTabView.$('.page-title').text()).toBe('test topic');
                 expect(teamsTabView.$('.page-description').text()).toBe('test description');
             });
+
+            it('does not switch to showing results when the search returns an error', function () {
+                var requests = AjaxHelpers.requests(this),
+                    teamsTabView = createTeamsTabView();
+                teamsTabView.browseTopic('test_topic');
+                AjaxHelpers.respondWithJson(requests, {});
+
+                // Perform a search
+                teamsTabView.$('.search-field').val('foo');
+                teamsTabView.$('.action-search').click();
+                AjaxHelpers.respondWithError(requests);
+                expect(searchFieldView.$('.search-field').val(), 'foo');
+            });
         });
     });
 });

@@ -12,7 +12,8 @@
 
                 events: {
                     'submit .search-form': 'performSearch',
-                    'blur .search-form': 'performSearch'
+                    'blur .search-form': 'performSearch',
+                    'click .action-clear': 'clearSearch'
                 },
 
                 initialize: function(options) {
@@ -36,6 +37,12 @@
                         searchString = $.trim(searchField.val());
                     event.preventDefault();
                     this.collection.setSearchString(searchString);
+                    return this.collection.refresh();
+                },
+
+                clearSearch: function(event) {
+                    event.preventDefault();
+                    this.collection.setSearchString('');
                     return this.collection.refresh();
                 }
             });

@@ -2,6 +2,9 @@
     <form class="search-form">
         <label for="search-<%= type %>" class="search-label">><%- searchLabel %></label>
         <input id="search-<%= type %>" class="search-field" value="<%- searchString %>" placeholder="<%- searchLabel %>" />
+        <button type="button" class="action action-clear" aria-label="<%- gettext('Clear search') %>">
+            <i class="icon fa fa-remove" aria-hidden="true"></i>
+        </button>
         <button type="submit" class="action action-search"><span class="icon fa-search" aria-hidden="true"></span><span class="sr"><%- gettext('Search') %></span></button>
     </form>
 </div>

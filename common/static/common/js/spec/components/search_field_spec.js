@@ -78,19 +78,26 @@ define([
             expect(searchFieldView.$('.search-field').val(), 'foo');
         });
 
-        it('does not refresh when the server throws an error', function () {
+        it('can clear the search', function () {
             var requests = AjaxHelpers.requests(this);
-            searchFieldView = createSearchFieldView().render();
-            searchFieldView.$('.search-field').val('foo');
-            searchFieldView.$('.action-search').click();
+            searchFieldView = createSearchFieldView({
+                searchString: 'foo'
+            }).render();
+            searchFieldView.$('.action-clear').click();
             AjaxHelpers.expectRequestURL(requests, mockUrl, {
                 page: '1',
                 page_size: '10',
                 sort_order: '',
-                text_search: 'foo'
+                text_search: ''
             });
-            AjaxHelpers.respondWithError(requests);
-            expect(searchFieldView.$('.search-field').val(), 'foo');
+            AjaxHelpers.respondWithJson(requests, {
+                count: 10,
+                current_page: 1,
+                num_pages: 1,
+                start: 0,
+                results: []
+            });
+            expect(searchFieldView.$('.search-field').val(), '');
         });
     });
 });
