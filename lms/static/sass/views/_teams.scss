@@ -91,16 +91,10 @@
     .search-field {
         transition: all $tmg-f2 ease-in-out;
         border: 0;
-        border-bottom: 2px solid transparent;
         padding: ($baseline/4) ($baseline/2);
         font-family: inherit;
         color: $gray;
         @include text-align(right);
-
-        &:focus {
-          border-bottom: 2px solid $black;
-          color: $black;
-        }
     }
 
     .action-search {

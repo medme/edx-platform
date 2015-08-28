@@ -223,7 +223,7 @@
                     var view = this;
                     this.getTopic(topicID).done(function (topic) {
                         view.mainView = view.createViewWithHeader({
-                            parentTopic: topic,
+                            topic: topic,
                             title: gettext("Create a New Team"),
                             description: gettext("Create a new team if you can't find an existing team to join, or if you would like to learn with friends you know."),
                             mainView: new TeamEditView({
@@ -259,8 +259,8 @@
                                 model: team
                             });
                             editViewWithHeader = self.createViewWithHeader({
-                                parentTopic: topic,
-                                parentTeam: team,
+                                topic: topic,
+                                team: team,
                                 title: gettext("Edit Team"),
                                 description: gettext("If you make significant changes, make sure you notify members of the team before making these changes."),
                                 mainView: view
@@ -411,7 +411,7 @@
                                     {
                                         mainView: view,
                                         subject: team,
-                                        parentTopic: topic,
+                                        topic: topic,
                                         headerActionsView: TeamProfileActionsView
                                     }
                                 )
@@ -447,7 +447,7 @@
                         title = options.title || subject.get('name'),
                         description = options.description || subject.get('description');
                     if (!breadcrumbs) {
-                        breadcrumbs = this.createBreadcrumbs(subject, options.parentTopic, options.parentTeam);
+                        breadcrumbs = this.createBreadcrumbs(subject, options.topic, options.team);
                     }
                     return new TeamsHeaderModel({
                         breadcrumbs: breadcrumbs,
