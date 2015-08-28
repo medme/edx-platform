@@ -84,35 +84,53 @@
 
   .page-header-search {
 
+    .wrapper-search-input {
+      position: relative;
+      display: inline-block;
+    }
+
     .search-label {
         @extend %text-sr;
     }
 
     .search-field {
         transition: all $tmg-f2 ease-in-out;
-        border: 0;
+        border: 1px solid $gray-l4;
+        border-radius: 3px;
         padding: ($baseline/4) ($baseline/2);
         font-family: inherit;
         color: $gray;
-        @include text-align(right);
     }
 
     .action-search {
       @extend %button-reset;
-      padding: ($baseline/4) ($baseline/2);
-
+      padding: ($baseline/5) ($baseline/2);
+      background-color: $gray-l3;
+      text-shadow: none;
 
       .icon {
-          color: $gray-l3;
+          color: $white;
       }
 
       // STATE: hover and focus
       &:hover,
       &:focus {
+        background-color: $blue;
+      }
+    }
 
-        .icon {
-            color: $black;
-        }
+    .action-clear {
+      @extend %button-reset;
+      position: absolute;
+      right: 0;
+      margin: 0 ($baseline/4) 0 0;
+      padding: ($baseline/4);
+      color: $gray-l3;
+
+      // STATE: hover and focus
+      &:hover,
+      &:focus {
+        color: $black;
       }
     }
   }
@@ -247,6 +265,11 @@
         @include margin-right ($baseline*.75);
         color: $gray-d1;
 
+        abbr {
+          border: 0;
+          text-decoration: none;
+        }
+
         .icon {
           @include margin-right ($baseline/4);
         }
@@ -319,10 +342,6 @@
     }
 
     &.has-pennant {
-
-      .wrapper-card-core {
-        padding-top: ($baseline*2);
-      }
 
       .pennant {
         @extend %t-copy-sub2;
