@@ -9,7 +9,7 @@
         function (Backbone, _, gettext, TeamUtils, teamProfileHeaderActionsTemplate) {
             return Backbone.View.extend({
 
-                errorMessage: gettext("An error occurred. Try again."),
+                errorMessage: _.escape(gettext("An error occurred. Try again.")),
                 alreadyMemberMessage: gettext("You already belong to another team."),
                 teamFullMessage: gettext("This team is full."),
 

@@ -11,7 +11,7 @@
         function (Backbone, _, gettext, TeamDiscussionView, ViewUtils, TeamUtils, teamTemplate, teamMemberTemplate) {
             var TeamProfileView = Backbone.View.extend({
 
-                errorMessage: gettext("An error occurred. Try again."),
+                errorMessage: _.escape(gettext("An error occurred. Try again.")),
 
                 events: {
                     'click .leave-team-link': 'leaveTeam'
@@ -78,9 +78,9 @@
                     event.preventDefault();
                     var view = this;
                     ViewUtils.confirmThenRunOperation(
-                        gettext("Leave this team?"),
-                        gettext("If you leave, you can no longer post in this team's discussions. Your place will be available to another learner."),
-                        gettext("Confirm"),
+                        _.escape(gettext("Leave this team?")),
+                        _.escape(gettext("If you leave, you can no longer post in this team's discussions. Your place will be available to another learner.")),
+                        _.escape(gettext("Confirm")),
                         function() {
                             $.ajax({
                                 type: 'DELETE',
