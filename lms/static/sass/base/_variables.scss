@@ -55,17 +55,17 @@ $white-t2:  rgba($white, 0.5) !default;
 $white-t3:  rgba($white, 0.75) !default;
 
 $gray:      rgb(118,118,118) !default;    // #767676 AA compliant
-$gray-l1:   tint($gray,20%);  // #989898
-$gray-l2:   tint($gray,40%);  // #b2b2b2
-$gray-l3:   tint($gray,60%);  // #cbcbcb
-$gray-l4:   tint($gray,80%);  // #e5e5e5
-$gray-l5:   tint($gray,90%);  // #f2f2f2
-$gray-l6:   tint($gray,95%);  // #f8f8f8
-$gray-l7:   tint($gray,99%);  // #fdfdfd
-$gray-d1:   shade($gray,20%); // #656565
-$gray-d2:   shade($gray,40%); // #4c4c4c
-$gray-d3:   shade($gray,60%); // #323232
-$gray-d4:   shade($gray,80%); // #191919
+$gray-l1:   tint($gray,20%) !default;  // #989898
+$gray-l2:   tint($gray,40%) !default;  // #b2b2b2
+$gray-l3:   tint($gray,60%) !default;  // #cbcbcb
+$gray-l4:   tint($gray,80%) !default;  // #e5e5e5
+$gray-l5:   tint($gray,90%) !default;  // #f2f2f2
+$gray-l6:   tint($gray,95%) !default;  // #f8f8f8
+$gray-l7:   tint($gray,99%) !default;  // #fdfdfd
+$gray-d1:   shade($gray,20%) !default; // #656565
+$gray-d2:   shade($gray,40%) !default; // #4c4c4c
+$gray-d3:   shade($gray,60%) !default; // #323232
+$gray-d4:   shade($gray,80%) !default; // #191919
 
 
 $blue: rgb(0, 120, 176);
