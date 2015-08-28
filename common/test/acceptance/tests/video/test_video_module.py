@@ -391,6 +391,7 @@ class YouTubeVideoTest(VideoBaseTest):
         And the YouTube API is blocked
         And the course has a Video component in "Youtube_HTML5" mode
         Then the video has rendered in "HTML5" mode
+        And only one video has rendered
         """
         # configure youtube server
         self.youtube_configuration.update({
@@ -403,6 +404,9 @@ class YouTubeVideoTest(VideoBaseTest):
         self.navigate_to_video()
 
         self.assertTrue(self.video.is_video_rendered('html5'))
+
+        # The video should only be loaded once
+        self.assertEqual(len(self.video.q(css='video')), 1)
 
     def test_html5_video_rendered_with_youtube_captions(self):
         """
