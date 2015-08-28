@@ -66,7 +66,11 @@
                 this.currentPage = response.current_page;
                 this.totalPages = response.num_pages;
                 this.start = response.start;
-                this.sortField = response.sort_order;
+
+                // Note: sort_order is not returned when performing a search
+                if (response.sort_order) {
+                    this.sortField = response.sort_order;
+                }
                 return response.results;
             },
 

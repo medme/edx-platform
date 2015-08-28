@@ -747,8 +747,8 @@ class TeamFormActions(TeamsTabBase):
         self.browse_teams_page.click_create_team_link()
         self.verify_page_header(
             title='Create a New Team',
-            description='Create a new team if you can\'t find existing teams to '
-                        'join, or if you would like to learn with friends you know.',
+            description='Create a new team if you can\'t find an existing team to join, '
+                        'or if you would like to learn with friends you know.',
             breadcrumbs='All Topics {topic_name}'.format(topic_name=self.topic['name'])
         )
 

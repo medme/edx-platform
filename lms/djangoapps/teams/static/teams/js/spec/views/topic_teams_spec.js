@@ -11,14 +11,11 @@ define([
         var createTopicTeamsView = function(options) {
             return new TopicTeamsView({
                 el: '.teams-container',
+                model: TeamSpecHelpers.createMockTopic(),
                 collection: options.teams || TeamSpecHelpers.createMockTeams(),
                 teamMemberships: options.teamMemberships || TeamSpecHelpers.createMockTeamMemberships(),
                 showActions: true,
-                teamParams: {
-                    topicID: 'test-topic',
-                    countries: TeamSpecHelpers.testCountries,
-                    languages: TeamSpecHelpers.testLanguages
-                }
+                context: TeamSpecHelpers.testContext
             }).render();
         };
 
@@ -69,7 +66,7 @@ define([
             expect(Backbone.history.navigate.calls[0].args).toContain('browse');
         });
 
-        it('can search teams', function () {
+        it('gives the search field focus when clicking on the search teams link', function () {
             var emptyMembership = TeamSpecHelpers.createMockTeamMemberships([]),
                 teamsView = createTopicTeamsView({ teamMemberships: emptyMembership });
             spyOn($.fn, 'focus').andCallThrough();
@@ -82,7 +79,9 @@ define([
                 teamsView = createTopicTeamsView({ teamMemberships: emptyMembership });
             spyOn(Backbone.history, 'navigate');
             teamsView.$('a.create-team').click();
-            expect(Backbone.history.navigate.calls[0].args).toContain('topics/test-topic/create-team');
+            expect(Backbone.history.navigate.calls[0].args).toContain(
+                'topics/' + TeamSpecHelpers.testTopicID + '/create-team'
+            );
         });
 
         it('does not show actions for a user already in a team', function () {
@@ -123,7 +122,7 @@ define([
                 {
                     expand : 'team',
                     username : 'testUser',
-                    course_id : 'my/course/id',
+                    course_id : TeamSpecHelpers.testCourseID,
                     page : '1',
                     page_size : '10'
                 }

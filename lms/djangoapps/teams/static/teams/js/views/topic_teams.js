@@ -58,7 +58,7 @@
 
                 showCreateTeamForm: function (event) {
                     event.preventDefault();
-                    Backbone.history.navigate('topics/' + this.teamParams.topicID + '/create-team', {trigger: true});
+                    Backbone.history.navigate('topics/' + this.model.id + '/create-team', {trigger: true});
                 },
 
                 createHeaderView: function () {

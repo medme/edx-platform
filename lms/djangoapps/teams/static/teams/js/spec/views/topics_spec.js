@@ -10,7 +10,8 @@ define([
             return new TopicsView({
                 teamEvents: TeamSpecHelpers.teamEvents,
                 el: '.topics-container',
-                collection: topicCollection
+                collection: topicCollection,
+                context: TeamSpecHelpers.createMockContext()
             }).render();
         };
 
@@ -50,9 +51,9 @@ define([
             triggerUpdateEvent(topicsView);
             AjaxHelpers.expectRequestURL(
                 requests,
-                'api/teams/topics',
+                TeamSpecHelpers.testContext.topicUrl,
                 {
-                    course_id: 'my/course/id',
+                    course_id: TeamSpecHelpers.testCourseID,
                     page: '1',
                     page_size: '5',  // currently the page size is determined by the size of the collection
                     order_by: 'name',
@@ -69,9 +70,9 @@ define([
             triggerUpdateEvent(topicsView, true);
             AjaxHelpers.expectRequestURL(
                 requests,
-                'api/teams/topics',
+                TeamSpecHelpers.testContext.topicUrl,
                 {
-                    course_id: 'my/course/id',
+                    course_id: TeamSpecHelpers.testCourseID,
                     page: '1',
                     page_size: '5',  // currently the page size is determined by the size of the collection
                     order_by: 'name',
