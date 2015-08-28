@@ -9,8 +9,6 @@
                     var self = this;
                     BaseCollection.prototype.initialize.call(this, options);
 
-                    this.searchString = null;
-
                     this.server_api = _.extend(
                         {
                             topic_id: this.topic_id = options.topic_id,
@@ -26,12 +24,7 @@
                     this.registerSortableField('open_slots', gettext('open slots'));
                 },
 
-                model: TeamModel,
-
-                setSearchString: function(searchString) {
-                    this.searchString = searchString;
-                    this.isStale = true;
-                }
+                model: TeamModel
             });
             return TeamCollection;
         });

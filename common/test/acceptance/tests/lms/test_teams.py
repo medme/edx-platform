@@ -691,7 +691,7 @@ class BrowseTeamsWithinTopicTest(TeamsTabBase):
         When I navigate to that link
         Then the search field should have the focus
         """
-        teams = self.create_teams(self.topic, self.TEAMS_PAGE_SIZE + 10)
+        self.create_teams(self.topic, self.TEAMS_PAGE_SIZE + 10)
         self.browse_teams_page.visit()
         self.verify_page_header()
 

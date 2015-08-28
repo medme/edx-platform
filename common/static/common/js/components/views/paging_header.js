@@ -47,7 +47,7 @@
                 var selected = this.$('#paging-header-select option:selected');
                 this.sortOrder = selected.attr('value');
                 this.collection.setSortField(this.sortOrder);
-                this.collection.setPage(1);
+                this.collection.refresh();
             }
         });
         return PagingHeader;

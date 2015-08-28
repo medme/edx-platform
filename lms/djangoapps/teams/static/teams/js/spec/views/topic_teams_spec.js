@@ -27,8 +27,8 @@ define([
                 options = {showActions: true};
             }
             var expectedTitle = 'Are you having trouble finding a team to join?',
-                expectedMessage = 'Try browsing all teams or searching team descriptions. If you ' +
-                    'still can\'t find a team to join, create a new team in this topic.',
+                expectedMessage = 'Browse teams in other topics or search team descriptions in this topic. ' +
+                    'If you still can\'t find a team to join, create a new team in this topic.',
                 title = teamsView.$('.title').text().trim(),
                 message = teamsView.$('.copy').text().trim();
             if (options.showActions) {
@@ -65,17 +65,16 @@ define([
             var emptyMembership = TeamSpecHelpers.createMockTeamMemberships([]),
                 teamsView = createTopicTeamsView({ teamMemberships: emptyMembership });
             spyOn(Backbone.history, 'navigate');
-            teamsView.$('a.browse-teams').click();
+            teamsView.$('.browse-teams').click();
             expect(Backbone.history.navigate.calls[0].args).toContain('browse');
         });
 
         it('can search teams', function () {
             var emptyMembership = TeamSpecHelpers.createMockTeamMemberships([]),
                 teamsView = createTopicTeamsView({ teamMemberships: emptyMembership });
-            spyOn(Backbone.history, 'navigate');
-            teamsView.$('a.search-teams').click();
-            // TODO! Should be updated once team description search feature is available
-            expect(Backbone.history.navigate.calls[0].args).toContain('browse');
+            spyOn($.fn, 'focus').andCallThrough();
+            teamsView.$('.search-teams').click();
+            expect(teamsView.$('.search-field').first().focus).toHaveBeenCalled();
         });
 
         it('can show the create team modal', function () {

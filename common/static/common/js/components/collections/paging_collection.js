@@ -110,7 +110,6 @@
                 if (force || this.isStale) {
                     this.setPage(1)
                         .done(function() {
-                            self.isStale = false;
                             deferred.resolve();
                         });
                 } else {
@@ -234,12 +233,15 @@
             },
 
             /**
-             * Sets the string to use for a text search. By default no search will be performed.
-             * @param searchString A string to search on, or null if no search is to be performed.
+             * Sets the string to use for a text search. If no string is specified then
+             * the search is cleared.
+             * @param searchString A string to search on, or null if no search is to be applied.
              */
             setSearchString: function(searchString) {
-                this.searchString = searchString;
-                this.isStale = true;
+                if (searchString !== this.searchString) {
+                    this.searchString = searchString;
+                    this.isStale = true;
+                }
             }
         }, {
             SortDirection: {

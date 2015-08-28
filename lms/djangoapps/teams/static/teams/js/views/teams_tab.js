@@ -1,4 +1,4 @@
-;(function (define) {
+;(function (define, interpolate) {
     'use strict';
 
     define(['backbone',
@@ -25,7 +25,7 @@
                   TopicsView, TeamProfileView, MyTeamsView, TopicTeamsView, TeamEditView,
                   TeamProfileHeaderActionsView, teamsTemplate) {
             var TeamsHeaderModel = HeaderModel.extend({
-                initialize: function (attributes) {
+                initialize: function () {
                     _.extend(this.defaults, {nav_aria_label: gettext('teams')});
                     HeaderModel.prototype.initialize.call(this);
                 }
@@ -75,6 +75,7 @@
                             // being picked up by the backbone router.
                         }, this)],
                         ['topics/:topic_id(/)', _.bind(this.browseTopic, this)],
+                        ['topics/:topic_id/search(/)', _.bind(this.searchTeams, this)],
                         ['topics/:topic_id/create-team(/)', _.bind(this.newTeam, this)],
                         ['topics/:topic_id/:team_id/edit-team(/)', _.bind(this.editTeam, this)],
                         ['teams/:topic_id/:team_id(/)', _.bind(this.browseTeam, this)],
@@ -106,12 +107,7 @@
                         collection: this.teamMemberships,
                         teamMemberships: this.teamMemberships,
                         maxTeamSize: this.maxTeamSize,
-                        teamParams: {
-                            courseID: this.courseID,
-                            teamsUrl: this.teamsUrl,
-                            languages: this.languages,
-                            countries: this.countries
-                        }
+                        teamParams: this.createTeamParams()
                     });
 
                     this.topicsCollection = new TopicCollection(
@@ -144,7 +140,9 @@
                                 view: this.myTeamsView
                             }, {
                                 title: interpolate(
-                                    // Translators: sr_start and sr_end surround text meant only for screen readers.  The whole string will be shown to users as "Browse teams" if they are using a screenreader, and "Browse" otherwise.
+                                    // Translators: sr_start and sr_end surround text meant only for screen readers.
+                                    // The whole string will be shown to users as "Browse teams" if they are using a
+                                    // screenreader, and "Browse" otherwise.
                                     gettext("Browse %(sr_start)s teams %(sr_end)s"),
                                     {"sr_start": '<span class="sr">', "sr_end": '</span>'}, true
                                 ),
@@ -192,35 +190,49 @@
                 },
 
                 /**
+                 * Show the search results for a team.
+                 */
+                searchTeams: function (topicID) {
+                    var view = this;
+                    if (!this.teamsCollection) {
+                        this.router.navigate('topics/' + topicID, {trigger: true});
+                    } else {
+                        this.getTopic(topicID).done(function (topic) {
+                            view.mainView = view.createTeamsListView({
+                                topic: topic,
+                                collection: view.teamsCollection,
+                                headerModel: new TeamsHeaderModel({
+                                    breadcrumbs: view.createBreadcrumbs(topic),
+                                    title: gettext('Team Search'),
+                                    description: interpolate(
+                                        gettext('Showing results for "%(searchString)s"'),
+                                        { searchString: view.teamsCollection.searchString },
+                                        true
+                                    )
+                                })
+                            });
+                            view.render();
+                        });
+                    }
+                },
+
+                /**
                  * Render the create new team form.
                  */
                 newTeam: function (topicID) {
-                    var self = this,
-                        createViewWithHeader;
+                    var view = this;
                     this.getTopic(topicID).done(function (topic) {
-                        var view = new TeamEditView({
-                            action: 'create',
-                            teamEvents: self.teamEvents,
-                            teamParams: {
-                                courseID: self.courseID,
-                                topicID: topic.get('id'),
-                                teamsUrl: self.teamsUrl,
-                                topicName: topic.get('name'),
-                                languages: self.languages,
-                                countries: self.countries,
-                                teamsDetailUrl: self.teamsDetailUrl
-                            }
+                        view.mainView = view.createViewWithHeader({
+                            parentTopic: topic,
+                            title: gettext("Create a New Team"),
+                            description: gettext("Create a new team if you can't find an existing team to join, or if you would like to learn with friends you know."),
+                            mainView: new TeamEditView({
+                                action: 'create',
+                                teamEvents: view.teamEvents,
+                                teamParams: view.createTeamParams(topic)
+                            })
                         });
-                        createViewWithHeader = self.createViewWithHeader({
-                            mainView: view,
-                            subject: {
-                                name: gettext("Create a New Team"),
-                                description: gettext("Create a new team if you can't find existing teams to join, or if you would like to learn with friends you know.")
-                            },
-                            parentTopic: topic
-                        });
-                        self.mainView = createViewWithHeader;
-                        self.render();
+                        view.render();
                     });
                 },
 
@@ -247,15 +259,12 @@
                                 model: team
                             });
                             editViewWithHeader = self.createViewWithHeader({
-                                    mainView: view,
-                                    subject: {
-                                        name: gettext("Edit Team"),
-                                        description: gettext("If you make significant changes, make sure you notify members of the team before making these changes.")
-                                    },
-                                    parentTeam: team,
-                                    parentTopic: topic
-                                }
-                            );
+                                parentTopic: topic,
+                                parentTeam: team,
+                                title: gettext("Edit Team"),
+                                description: gettext("If you make significant changes, make sure you notify members of the team before making these changes."),
+                                mainView: view
+                            });
                             self.mainView = editViewWithHeader;
                             self.render();
                         });
@@ -268,7 +277,7 @@
                 getTeamsView: function (topicID) {
                     // Lazily load the teams-for-topic view in
                     // order to avoid making an extra AJAX call.
-                    var self = this,
+                    var view = this,
                         deferred = $.Deferred();
                     if (this.teamsView && this.teamsCollection && this.teamsCollection.topic_id === topicID) {
                         this.teamsCollection.setSearchString('');
@@ -277,44 +286,72 @@
                         this.getTopic(topicID)
                             .done(function(topic) {
                                 var collection = new TeamCollection([], {
-                                    teamEvents: self.teamEvents,
-                                    course_id: self.courseID,
+                                    teamEvents: view.teamEvents,
+                                    course_id: view.courseID,
                                     topic_id: topicID,
-                                    url: self.teamsUrl,
+                                    url: view.teamsUrl,
                                     per_page: 10
                                 });
-                                self.teamsCollection = collection;
+                                view.teamsCollection = collection;
                                 collection.goTo(1)
                                     .done(function() {
-                                        var teamsView = new TopicTeamsView({
-                                            router: self.router,
+                                        var teamsView = view.createTeamsListView({
                                             topic: topic,
-                                            collection: collection,
-                                            teamMemberships: self.teamMemberships,
-                                            maxTeamSize: self.maxTeamSize,
-                                            teamParams: {
-                                                courseID: self.courseID,
-                                                topicID: topic.get('id'),
-                                                teamsUrl: self.teamsUrl,
-                                                topicName: topic.get('name'),
-                                                languages: self.languages,
-                                                countries: self.countries,
-                                                teamsDetailUrl: self.teamsDetailUrl
-                                            }
+                                            collection: collection
                                         });
-                                        deferred.resolve(
-                                            self.createSearchableListView(
-                                                {
-                                                    mainView: teamsView,
-                                                    subject: topic,
-                                                    collection: collection
-                                                }
-                                            )
-                                        );
+                                        deferred.resolve(teamsView);
                                     });
                             });
                     }
                     return deferred.promise();
+                },
+
+                createTeamsListView: function(options) {
+                    var topic = options.topic,
+                        collection = options.collection,
+                        teamsView = new TopicTeamsView({
+                            router: this.router,
+                            topic: topic,
+                            collection: collection,
+                            teamMemberships: this.teamMemberships,
+                            maxTeamSize: this.maxTeamSize,
+                            teamParams: this.createTeamParams(topic)
+                        }),
+                        searchFieldView = new SearchFieldView({
+                            type: 'teams',
+                            label: gettext('Search teams'),
+                            collection: collection
+                        }),
+                        viewWithHeader = this.createViewWithHeader(
+                            _.extend(
+                                {
+                                    subject: topic,
+                                    mainView: teamsView,
+                                    headerActionsView: searchFieldView
+                                },
+                                options
+                            )
+                        );
+                    this.listenTo(collection, 'sync', function() {
+                        if (collection.searchString) {
+                            this.router.navigate('topics/' + topic.get('id') + '/search', {trigger: true});
+                        } else {
+                            this.router.navigate('topics/' + topic.get('id'), {trigger: true});
+                        }
+                    });
+                    return viewWithHeader;
+                },
+
+                createTeamParams: function(topic) {
+                    return {
+                        courseID: this.courseID,
+                        teamsUrl: this.teamsUrl,
+                        teamsDetailUrl: this.teamsDetailUrl,
+                        languages: this.languages,
+                        countries: this.countries,
+                        topicID: topic ? topic.get('id') : null,
+                        topicName: topic ? topic.get('name') : null
+                    };
                 },
 
                 /**
@@ -384,99 +421,58 @@
                     return deferred.promise();
                 },
 
-                createViewWithHeader: function (options) {
-                    var router = this.router,
-                        breadcrumbs, headerView,
-                        viewDescription, viewTitle;
-                    breadcrumbs = [{
+                createBreadcrumbs: function(topic, team) {
+                    var breadcrumbs = [{
                         title: gettext('All Topics'),
                         url: '#browse'
                     }];
-                    if (options.parentTopic) {
+                    if (topic) {
                         breadcrumbs.push({
-                            title: options.parentTopic.get('name'),
-                            url: '#topics/' + options.parentTopic.id
+                            title: topic.get('name'),
+                            url: '#topics/' + topic.id
                         });
                     }
-                    if (options.parentTeam) {
+                    if (team) {
                         breadcrumbs.push({
-                            title: options.parentTeam.get('name'),
-                            url: '#teams/' + options.parentTopic.id + '/' + options.parentTeam.id
+                            title: team.get('name'),
+                            url: '#teams/' + topic.id + '/' + team.id
                         });
                     }
-                    if (options.subject instanceof Backbone.Model) {
-                        viewDescription = options.subject.get('description');
-                        viewTitle = options.subject.get('name');
+                    return breadcrumbs;
+                },
 
-                    } else if (options.subject) {
-                        viewDescription = options.subject.description;
-                        viewTitle = options.subject.name;
+                createHeaderModel: function(options) {
+                    var subject = options.subject,
+                        breadcrumbs = options.breadcrumbs,
+                        title = options.title || subject.get('name'),
+                        description = options.description || subject.get('description');
+                    if (!breadcrumbs) {
+                        breadcrumbs = this.createBreadcrumbs(subject, options.parentTopic, options.parentTeam);
                     }
-
-                    headerView = new HeaderView({
-                        model: new TeamsHeaderModel({
-                            description: viewDescription,
-                            title: viewTitle,
-                            breadcrumbs: breadcrumbs
-                        }),
-                        headerType: options.headerType,
-                        headerActionsView: options.headerActionsView,
-                        events: {
-                            'click nav.breadcrumbs a.nav-item': function (event) {
-                                var url = $(event.currentTarget).attr('href');
-                                event.preventDefault();
-                                router.navigate(url, {trigger: true});
-                            }
-                        }
-                    });
-                    return new ViewWithHeader({
-                        header: headerView,
-                        main: options.mainView
+                    return new TeamsHeaderModel({
+                        breadcrumbs: breadcrumbs,
+                        title: title,
+                        description: description
                     });
                 },
 
-                /**
-                 * Creates a searchable view with a header that understands
-                 * how to handle searches.
-                 */
-                createSearchableListView: function (options) {
-                    var subject = options.subject,
-                        collection = options.collection,
-                        searchFieldView, view, headerModel;
-                    searchFieldView = new SearchFieldView({
-                        type: 'teams',
-                        collection: collection
+                createViewWithHeader: function(options) {
+                    var router = this.router;
+                    return new ViewWithHeader({
+                        header: new HeaderView({
+                            model: options.headerModel || this.createHeaderModel(options),
+                            headerType: options.headerType,
+                            headerActionsView: options.headerActionsView,
+                            events: {
+                                'click nav.breadcrumbs a.nav-item': function (event) {
+                                    var url = $(event.currentTarget).attr('href');
+                                    event.preventDefault();
+                                    router.navigate(url, {trigger: true});
+                                }
+                            }
+                        }),
+                        main: options.mainView
                     });
-                    view = this.createViewWithHeader({
-                        mainView: options.mainView,
-                        subject: subject,
-                        headerActionsView: searchFieldView
-                    });
-                    headerModel = view.header.model;
-                    this.listenTo(collection, 'sync', function() {
-                        if (collection.searchString) {
-                            headerModel.set(
-                                'title',
-                                interpolate(
-                                    gettext('Search Topic: %(topic)s'),
-                                    { topic: subject.get('name') },
-                                    true
-                                )
-                            );
-                            headerModel.set(
-                                'description',
-                                interpolate(
-                                    gettext('Showing results for "%(searchString)s"'),
-                                    { searchString: collection.searchString },
-                                    true
-                                )
-                            );
-                        } else {
-                            headerModel.set('title', subject.get('name'));
-                            headerModel.set('description', subject.get('description'));
-                        }
-                    });
-                    return view;
                 },
 
                 /**
@@ -629,4 +625,4 @@
 
             return TeamTabView;
         });
-}).call(this, define || RequireJS.define);
+}).call(this, define || RequireJS.define, interpolate);

@@ -38,7 +38,7 @@ define([
                 },
                 options || {}
             );
-            return new SearchFieldView(options || {});
+            return new SearchFieldView(options);
         };
 
         beforeEach(function() {
@@ -46,9 +46,7 @@ define([
         });
 
         it('correctly displays itself', function () {
-            searchFieldView = createSearchFieldView({
-                collection: newCollection(20, 5)
-            }).render();
+            searchFieldView = createSearchFieldView().render();
             expect(searchFieldView.$('.search-field').val(), '');
         });
 

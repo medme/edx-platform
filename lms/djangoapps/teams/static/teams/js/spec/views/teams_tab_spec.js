@@ -171,7 +171,7 @@ define([
                     text_search: 'foo'
                 });
                 AjaxHelpers.respondWithJson(requests, {});
-                expect(teamsTabView.$('.page-title').text()).toBe('Search Topic: test topic');
+                expect(teamsTabView.$('.page-title').text()).toBe('Team Search');
                 expect(teamsTabView.$('.page-description').text()).toBe('Showing results for "foo"');
             });
 
@@ -209,12 +209,8 @@ define([
                 teamsTabView.$('.action-search').click();
                 AjaxHelpers.respondWithJson(requests, {});
 
-                // Navigate to the "My Teams" tab
-                teamsTabView.goToTab('my-teams');
-                AjaxHelpers.respondWithJson(requests, {});
-
                 // Navigate back to the teams list
-                teamsTabView.browseTopic('test_topic');
+                teamsTabView.$('.breadcrumbs a').last().click();
                 verifyTeamsRequest(requests, {
                     order_by: 'name',
                     text_search: ''

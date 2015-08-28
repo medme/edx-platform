@@ -11,20 +11,22 @@
             return Backbone.View.extend({
 
                 events: {
-                    'submit .search-form': 'performSearch'
+                    'submit .search-form': 'performSearch',
+                    'blur .search-form': 'performSearch'
                 },
 
                 initialize: function(options) {
                     Backbone.View.prototype.initialize.call(this, options);
                     this.type = options.type;
+                    this.label = options.label;
                     _.bindAll(this, 'performSearch');
                 },
 
                 render: function() {
                     this.$el.html(_.template(searchFieldTemplate, {
                         type: this.type,
-                        searchString: this.collection ? this.collection.searchString : '',
-                        searchLabel: gettext('Search teams')
+                        searchString: this.collection.searchString,
+                        searchLabel: this.label
                     }));
                     return this;
                 },
@@ -33,10 +35,8 @@
                     var searchField = this.$('.search-field'),
                         searchString = $.trim(searchField.val());
                     event.preventDefault();
-                    if (this.collection) {
-                        this.collection.setSearchString(searchString);
-                        this.collection.setPage(1);
-                    }
+                    this.collection.setSearchString(searchString);
+                    return this.collection.refresh();
                 }
             });
         });

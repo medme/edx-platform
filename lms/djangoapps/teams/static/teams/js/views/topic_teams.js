@@ -29,7 +29,7 @@
 
                             if (self.teamMemberships.canUserCreateTeam()) {
                                 var message = interpolate_text(
-                                    _.escape(gettext("Try {browse_span_start}browsing all teams{span_end} or {search_span_start}searching team descriptions{span_end}. If you still can't find a team to join, {create_span_start}create a new team in this topic{span_end}.")),
+                                    _.escape(gettext("{browse_span_start}Browse teams in other topics{span_end} or {search_span_start}search team descriptions{span_end} in this topic. If you still can't find a team to join, {create_span_start}create a new team in this topic{span_end}.")),
                                     {
                                         'browse_span_start': '<a class="browse-teams" href="">',
                                         'search_span_start': '<a class="search-teams" href="">',
