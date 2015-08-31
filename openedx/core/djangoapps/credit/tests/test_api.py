@@ -358,7 +358,7 @@ class CreditRequirementApiTests(CreditApiTestBase):
         self.add_credit_course()
 
         # A user satisfies a requirement. This could potentially
-        # happen if there's a lag when the requirements are updated
+        # happen if there's a lag when the requirements are removed
         # after the course is published.
         api.remove_credit_requirement_status("bob", self.course_key, "grade", "grade")
 
