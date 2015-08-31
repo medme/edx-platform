@@ -15,6 +15,7 @@
                 },
 
                 initialize: function(options) {
+                    this.showSortControls = options.showSortControls;
                     TeamsView.prototype.initialize.call(this, options);
                     _.bindAll(this, 'browseTeams', 'searchTeams', 'showCreateTeamForm');
                 },
@@ -65,7 +66,7 @@
                     return new PagingHeader({
                         collection: this.options.collection,
                         srInfo: this.srInfo,
-                        showSortControls: true
+                        showSortControls: this.showSortControls
                     });
                 }
             });

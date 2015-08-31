@@ -186,15 +186,13 @@
                             view.mainView = view.createTeamsListView({
                                 topic: topic,
                                 collection: view.teamsCollection,
-                                headerModel: new TeamsHeaderModel({
-                                    breadcrumbs: view.createBreadcrumbs(topic),
-                                    title: gettext('Team Search'),
-                                    description: interpolate(
-                                        gettext('Showing results for "%(searchString)s"'),
-                                        { searchString: view.teamsCollection.searchString },
-                                        true
-                                    )
-                                })
+                                title: gettext('Team Search'),
+                                description: interpolate(
+                                    gettext('Showing results for "%(searchString)s"'),
+                                    { searchString: view.teamsCollection.searchString },
+                                    true
+                                ),
+                                showSortControls: false
                             });
                             view.render();
                         });
@@ -214,7 +212,8 @@
                             mainView: new TeamEditView({
                                 action: 'create',
                                 teamEvents: view.teamEvents,
-                                context: view.context
+                                context: view.context,
+                                topic: topic
                             })
                         });
                         view.render();
@@ -275,7 +274,8 @@
                                     .done(function() {
                                         var teamsView = view.createTeamsListView({
                                             topic: topic,
-                                            collection: collection
+                                            collection: collection,
+                                            showSortControls: true
                                         });
                                         deferred.resolve(teamsView);
                                     });
@@ -292,23 +292,21 @@
                             context: this.context,
                             model: topic,
                             collection: collection,
-                            teamMemberships: this.teamMemberships
+                            teamMemberships: this.teamMemberships,
+                            showSortControls: options.showSortControls
                         }),
                         searchFieldView = new SearchFieldView({
                             type: 'teams',
                             label: gettext('Search teams'),
                             collection: collection
                         }),
-                        viewWithHeader = this.createViewWithHeader(
-                            _.extend(
-                                {
-                                    subject: topic,
-                                    mainView: teamsView,
-                                    headerActionsView: searchFieldView
-                                },
-                                options
-                            )
-                        );
+                        viewWithHeader = this.createViewWithHeader({
+                            subject: topic,
+                            mainView: teamsView,
+                            headerActionsView: searchFieldView,
+                            title: options.title,
+                            description: options.description
+                        });
                     this.listenTo(collection, 'sync', function() {
                         if (collection.searchString) {
                             this.router.navigate('topics/' + topic.get('id') + '/search', {trigger: true});
@@ -401,7 +399,7 @@
                         title = options.title || subject.get('name'),
                         description = options.description || subject.get('description');
                     if (!breadcrumbs) {
-                        breadcrumbs = this.createBreadcrumbs(subject, options.topic, options.team);
+                        breadcrumbs = this.createBreadcrumbs(options.topic, options.team);
                     }
                     return new TeamsHeaderModel({
                         breadcrumbs: breadcrumbs,
@@ -414,8 +412,7 @@
                     var router = this.router;
                     return new ViewWithHeader({
                         header: new HeaderView({
-                            model: options.headerModel || this.createHeaderModel(options),
-                            headerType: options.headerType,
+                            model: this.createHeaderModel(options),
                             headerActionsView: options.headerActionsView,
                             events: {
                                 'click nav.breadcrumbs a.nav-item': function (event) {

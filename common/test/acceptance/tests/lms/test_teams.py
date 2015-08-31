@@ -676,20 +676,16 @@ class BrowseTeamsWithinTopicTest(TeamsTabBase):
         self.browse_teams_page.go_to_page(1)
         self.verify_on_page(1, teams, 'Showing 1-10 out of 20 total', True)
 
-    def test_navigation_links(self):
+    def test_browse_team_topics(self):
         """
         Scenario: User should be able to navigate to "browse all teams" and "search team description" links.
         Given I am enrolled in a course with a team configuration and a topic
             containing one team
         When I visit the Teams page for that topic
         Then I should see the correct page header
-        And I should see the link to "browse all team"
+        And I should see the link to "browse teams in other topics"
         When I should navigate to that link
-        Then I should see the relevant page loaded
-        And I should see the link to "search teams"
-        And the search field should not have focus
-        When I navigate to that link
-        Then the search field should have the focus
+        Then I should see the topic browse page
         """
         self.create_teams(self.topic, self.TEAMS_PAGE_SIZE + 10)
         self.browse_teams_page.visit()
@@ -697,12 +693,6 @@ class BrowseTeamsWithinTopicTest(TeamsTabBase):
 
         self.browse_teams_page.click_browse_all_teams_link()
         self.assertTrue(self.topics_page.is_browser_on_page())
-
-        self.browse_teams_page.visit()
-        self.verify_page_header()
-        self.assertFalse(self.browse_teams_page.search_field_has_focus())
-        self.browse_teams_page.click_search_team_link()
-        self.assertTrue(self.browse_teams_page.search_field_has_focus())
 
     def test_search(self):
         """

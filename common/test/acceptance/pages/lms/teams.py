@@ -180,7 +180,6 @@ class BrowseTeamsPage(CoursePage, PaginatedUIMixin, TeamCardsMixin):
 
     def is_browser_on_page(self):
         """Check if we're on the teams list page for a particular topic."""
-        self.wait_for_element_presence('.team-actions', 'Wait for the bottom links to be present')
         has_correct_url = self.url.endswith(self.url_path)
         teams_list_view_present = self.q(css='.teams-main').present
         return has_correct_url and teams_list_view_present
@@ -243,13 +242,6 @@ class BrowseTeamsPage(CoursePage, PaginatedUIMixin, TeamCardsMixin):
         self.q(css='.search-field').first.fill(string)
         self.q(css='.action-search').first.click()
         EmptyPromise(self._showing_search_results, u"Showing search results").fulfill()
-
-    @wait_for_js
-    def search_field_has_focus(self):
-        """
-        Returns true if the search field has focus.
-        """
-        return self.browser.execute_script("return $('{}').is(':focus')".format('.search-field'))
 
 
 class CreateOrEditTeamPage(CoursePage, FieldsMixin):
