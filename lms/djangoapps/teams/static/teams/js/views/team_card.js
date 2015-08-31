@@ -19,22 +19,36 @@
                 '<span class="member-count"><%= membership_message %></span>' +
                 '<ul class="list-member-thumbs"></ul>'
             ),
+            profileImageTemplate: _.template(
+                '<li class="item-member-thumb"><img alt="<%- username %>" src="<%- profile_image_url %>"></img></li>'
+            ),
 
             initialize: function (options) {
                 this.maxTeamSize = options.maxTeamSize;
             },
 
             render: function () {
-                var memberships = this.model.get('membership'),
+                var totalMemberships = this.model.get('membership'),
+                    displayableMemberships = totalMemberships.slice(0, 5),
                     maxMemberCount = this.maxTeamSize;
                 this.$el.html(this.template({
-                    membership_message: TeamUtils.teamCapacityText(memberships.length, maxMemberCount)
+                    membership_message: TeamUtils.teamCapacityText(totalMemberships.length, maxMemberCount)
                 }));
-                _.each(memberships, function (membership) {
-                    this.$('list-member-thumbs').append(
-                        '<li class="item-member-thumb"><img alt="' + membership.user.username + '" src=""></img></li>'
+                // TODO: order by last active?
+                _.each(displayableMemberships, function (membership)  {
+                    this.$('.list-member-thumbs').append(
+                        this.profileImageTemplate({
+                            username: membership.user.username,
+                            profile_image_url: membership.user.profile_image.image_url_small
+                        })
                     );
                 }, this);
+                if (displayableMemberships.length < totalMemberships.length) {
+                    this.$('.list-member-thumbs').append(
+                        '<li class="item-member-thumb"><span class="icon fa-ellipsis-h"></span></li>'
+                    )
+                }
+
                 return this;
             }
         });
