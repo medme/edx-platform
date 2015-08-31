@@ -8,6 +8,10 @@
         function($, _, _s, Backbone, LoginModel, PasswordResetModel, RegisterModel, LoginView, PasswordResetView,
         RegisterView, InstitutionLoginView, HintedLoginView) {
 
+        if (_.isUndefined(_s)) {
+            _s = _.str;
+        }
+
         var AccessView = Backbone.View.extend({
             el: '#login-and-registration-container',
 

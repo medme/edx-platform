@@ -1,6 +1,7 @@
 ;(function (define) {
     'use strict';
-    define(['jquery', 'underscore', 'backbone', 'js/utils/edx.utils.validate'], function($, _, Backbone, EdxUtilsValidate) {
+    define(['jquery', 'underscore', 'backbone', 'js/utils/edx.utils.validate'],
+        function($, _, Backbone, EdxUtilsValidate) {
 
         var FormView = Backbone.View.extend({
             tagName: 'form',
