@@ -12,7 +12,8 @@ from certificates.models import (
 
 class GeneratedCertificateFactory(DjangoModelFactory):
 
-    FACTORY_FOR = GeneratedCertificate
+    class Meta:
+        model = GeneratedCertificate
 
     course_id = None
     status = CertificateStatuses.unavailable
@@ -22,21 +23,24 @@ class GeneratedCertificateFactory(DjangoModelFactory):
 
 class CertificateWhitelistFactory(DjangoModelFactory):
 
-    FACTORY_FOR = CertificateWhitelist
+    class Meta:
+        model = CertificateWhitelist
 
     course_id = None
     whitelist = True
 
 
 class BadgeAssertionFactory(DjangoModelFactory):
-    FACTORY_FOR = BadgeAssertion
+    class Meta:
+        model = BadgeAssertion
 
     mode = 'honor'
 
 
 class BadgeImageConfigurationFactory(DjangoModelFactory):
 
-    FACTORY_FOR = BadgeImageConfiguration
+    class Meta:
+        model = BadgeImageConfiguration
 
     mode = 'honor'
     icon = ImageField(color='blue', height=50, width=50, filename='test.png', format='PNG')
@@ -44,7 +48,8 @@ class BadgeImageConfigurationFactory(DjangoModelFactory):
 
 class CertificateHtmlViewConfigurationFactory(DjangoModelFactory):
 
-    FACTORY_FOR = CertificateHtmlViewConfiguration
+    class Meta:
+        model = CertificateHtmlViewConfiguration
 
     enabled = True
     configuration = """{
@@ -76,7 +81,8 @@ class CertificateHtmlViewConfigurationFactory(DjangoModelFactory):
 
 class LinkedInAddToProfileConfigurationFactory(DjangoModelFactory):
 
-    FACTORY_FOR = LinkedInAddToProfileConfiguration
+    class Meta:
+        model = LinkedInAddToProfileConfiguration
 
     enabled = True
     company_identifier = "0_0dPSPyS070e0HsE9HNz_13_d11_"
