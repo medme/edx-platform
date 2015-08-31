@@ -4,19 +4,14 @@
 
         var LoginView = FormView.extend({
             el: '#login-form',
-
             tpl: '#login-tpl',
-
             events: {
                 'click .js-login': 'submitForm',
                 'click .forgot-password': 'forgotPassword',
                 'click .login-provider': 'thirdPartyAuth'
             },
-
             formType: 'login',
-
             requiredStr: '',
-
             submitButton: '.js-login',
 
             preRender: function( data ) {

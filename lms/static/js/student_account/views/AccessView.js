@@ -13,14 +13,10 @@
         }
 
         var AccessView = Backbone.View.extend({
-            el: '#login-and-registration-container',
-
             tpl: '#access-tpl',
-
             events: {
                 'click .form-toggle': 'toggleForm'
             },
-
             subview: {
                 login: {},
                 register: {},
@@ -28,13 +24,13 @@
                 institutionLogin: {},
                 hintedLogin: {}
             },
-
             nextUrl: '/dashboard',
-
             // The form currently loaded
             activeForm: '',
 
-            initialize: function( obj ) {
+            initialize: function( options ) {
+                this.nextUrl = options.initial_mode;
+
                 /* Mix non-conflicting functions from underscore.string
                  * (all but include, contains, and reverse) into the
                  * Underscore namespace
@@ -43,31 +39,31 @@
 
                 this.tpl = $(this.tpl).html();
 
-                this.activeForm = obj.mode || 'login';
+                this.activeForm = options.initial_mode || 'login';
 
-                this.thirdPartyAuth = obj.thirdPartyAuth || {
+                this.thirdPartyAuth = options.third_party_auth || {
                     currentProvider: null,
                     providers: []
                 };
 
-                this.thirdPartyAuthHint = obj.thirdPartyAuthHint || null;
+                this.thirdPartyAuthHint = options.third_party_auth_hint || null;
 
-                if (obj.nextUrl) {
+                if (options.login_redirect_url) {
                     // Ensure that the next URL is internal for security reasons
-                    if ( ! window.isExternal( obj.nextUrl ) ) {
-                        this.nextUrl = obj.nextUrl;
+                    if ( ! window.isExternal( options.login_redirect_url ) ) {
+                        this.nextUrl = options.login_redirect_url;
                     }
                 }
 
                 this.formDescriptions = {
-                    login: obj.loginFormDesc,
-                    register: obj.registrationFormDesc,
-                    reset: obj.passwordResetFormDesc,
+                    login: options.login_form_desc,
+                    register: options.registration_form_desc,
+                    reset: options.password_reset_form_desc,
                     institution_login: null,
                     hinted_login: null
                 };
 
-                this.platformName = obj.platformName;
+                this.platformName = options.platform_name;
 
                 // The login view listens for 'sync' events from the reset model
                 this.resetModel = new PasswordResetModel({}, {
