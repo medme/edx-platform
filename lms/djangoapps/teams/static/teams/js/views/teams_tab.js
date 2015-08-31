@@ -192,6 +192,7 @@
                                     { searchString: view.teamsCollection.searchString },
                                     true
                                 ),
+                                breadcrumbs: view.createBreadcrumbs(topic),
                                 showSortControls: false
                             });
                             view.render();
@@ -305,7 +306,8 @@
                             mainView: teamsView,
                             headerActionsView: searchFieldView,
                             title: options.title,
-                            description: options.description
+                            description: options.description,
+                            breadcrumbs: options.breadcrumbs
                         });
                     this.listenTo(collection, 'sync', function() {
                         if (collection.searchString) {
