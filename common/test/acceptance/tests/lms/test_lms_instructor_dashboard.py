@@ -182,19 +182,6 @@ class ProctoredExamsTest(BaseInstructorDashboardTest):
 
         self._auto_auth(self.USERNAME, self.EMAIL, False, enrollment_mode="verified")
 
-        # # the track selection page cannot be visited. see the other tests to see if any prereq is there.
-        # # Navigate to the track selection page
-        # self.track_selection_page.visit()
-        #
-        # # Enter the payment and verification flow by choosing to enroll as verified
-        # self.track_selection_page.enroll('verified')
-        #
-        # # Proceed to the fake payment page
-        # self.payment_and_verification_flow.proceed_to_payment()
-        #
-        # # Submit payment
-        # self.fake_payment_page.submit_payment()
-
     def _create_a_proctored_exam_and_attempt(self):
         """
         Creates a proctored exam and makes the student attempt it so that
