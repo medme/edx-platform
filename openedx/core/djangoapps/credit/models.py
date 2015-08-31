@@ -467,6 +467,28 @@ class CreditRequirementStatus(TimeStampedModel):
             requirement_status.reason = reason if reason else {}
             requirement_status.save()
 
+    @classmethod
+    @transaction.commit_on_success
+    def remove_requirement_status(cls, username, requirement, status="satisfied"):
+        """
+        Remove credit requirement status for given username.
+
+        Args:
+            username(str): Username of the user
+            requirement(CreditRequirement): 'CreditRequirement' object
+            status(str): Status of the requirement
+
+        """
+
+        requirement_status = cls.objects.filter(
+            username=username,
+            requirement=requirement,
+            status=status
+        )
+        # check if the requirement_status is not None
+        if requirement_status is not None:
+            requirement_status[0].delete()
+
 
 class CreditEligibility(TimeStampedModel):
     """
