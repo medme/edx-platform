@@ -108,7 +108,6 @@
                 title: gettext(message)
             });
             notificationView.show();
-            notificationView.focus();
             return operation().done(function() {
                 notificationView.hide();
             });
