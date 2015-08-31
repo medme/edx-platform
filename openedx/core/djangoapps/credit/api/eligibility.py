@@ -318,8 +318,8 @@ def remove_credit_requirement_status(  # pylint: disable=invalid-name
     # we need to check whether all requirements have been satisfied.
     reqs = CreditRequirement.get_course_requirements(course_key)
 
-    # Find the requirement we're trying to set
-    req_to_update = next((
+    # Find the requirement we're trying to remove
+    req_to_remove = next((
         req for req in reqs
         if req.namespace == req_namespace
         and req.name == req_name
@@ -327,11 +327,11 @@ def remove_credit_requirement_status(  # pylint: disable=invalid-name
 
     # If we can't find the requirement, then the most likely explanation
     # is that there was a lag removing the credit requirements after the course
-    # was published.  We *could* attempt to create the requirement here,
+    # was published.  We *could* attempt to remove the requirement here,
     # but that could cause serious performance issues if many users attempt to
     # lock the row at the same time.
     # Instead, we skip removing the requirement and log an error.
-    if req_to_update is None:
+    if req_to_remove is None:
         log.error(
             (
                 u'Could not remove credit requirement in course "%s" '
@@ -345,7 +345,7 @@ def remove_credit_requirement_status(  # pylint: disable=invalid-name
 
     # Remove the requirement status
     CreditRequirementStatus.remove_requirement_status(
-        username, req_to_update, status=status
+        username, req_to_remove, status=status
     )
 
 
