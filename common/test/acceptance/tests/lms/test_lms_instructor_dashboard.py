@@ -168,19 +168,12 @@ class ProctoredExamsTest(BaseInstructorDashboardTest):
         # Auto-auth register for the course.
         self._auto_auth(self.USERNAME, self.EMAIL, False)
 
-    def _auto_auth(self, username, email, staff, enrollment_mode):
+    def _auto_auth(self, username, email, staff, enrollment_mode="honor"):
         """
         Logout and login with given credentials.
         """
         AutoAuthPage(self.browser, username=username, email=email,
                      course_id=self.course_id, staff=staff, enrollment_mode=enrollment_mode).visit()
-
-    def _login_as_a_verified_user(self):
-        """
-        login as a verififed user
-        """
-
-        self._auto_auth(self.USERNAME, self.EMAIL, False, enrollment_mode="verified")
 
     def _create_a_proctored_exam_and_attempt(self):
         """
@@ -199,7 +192,7 @@ class ProctoredExamsTest(BaseInstructorDashboardTest):
 
         # login as a verified student and visit the courseware.
         LogoutPage(self.browser).visit()
-        self._login_as_a_verified_user()
+        self._auto_auth(self.USERNAME, self.EMAIL, False, enrollment_mode="verified")
         self.courseware_page.visit()
 
         # Start the proctored exam.
@@ -222,7 +215,7 @@ class ProctoredExamsTest(BaseInstructorDashboardTest):
 
         # login as a verified student and visit the courseware.
         LogoutPage(self.browser).visit()
-        self._login_as_a_verified_user()
+        self._auto_auth(self.USERNAME, self.EMAIL, False, enrollment_mode="verified")
         self.courseware_page.visit()
 
         # Start the proctored exam.
